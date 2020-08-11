@@ -13,20 +13,20 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 
-class ClearanceImport implements ToModel, WithHeadingRow
+class ClearanceImport implements ToModel, WithHeadingRow, WithValidation
 {
     use Importable;
 
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param array $row
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
         $calendar = Calendar::where('calendar_year', $row['year'])
-                        ->Where('calendar_period', $row['month'])
-                        ->first();
+            ->Where('calendar_period', $row['month'])
+            ->first();
 
         $item   = Item::where('item_code', $row['item'])->first();
 
@@ -46,20 +46,14 @@ class ClearanceImport implements ToModel, WithHeadingRow
         return [
             'year' => 'required|numeric',
             'month' => 'required|numeric',
-            'item_id' => 'required|numeric',
+            'item' => 'required|numeric',
             'figure' => 'required|numeric',
             'measure'  => 'required|max:48'
         ];
     }
 
-    
     public function batchSize(): int
     {
         return 1000;
     }
-
-    
-
-
-
 }

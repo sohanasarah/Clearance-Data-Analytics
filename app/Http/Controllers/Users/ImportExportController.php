@@ -34,14 +34,16 @@ class ImportExportController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'import_file' => 'required|mime:csv,txt'
+            'import_file' => 'required|mimes:csv,txt'
         ]);
 
         try {
             Excel::import(new ClearanceImport, request()->file('import_file'));
         } catch (ValidationException $e) {
+            // dd($e);
             $failures = $e->failures();
-            return back()->with('failures', $failures);
+
+            return back()->withErrors($failures);
         }
 
         return back()->with('success', 'File Uploaded Successfully!');

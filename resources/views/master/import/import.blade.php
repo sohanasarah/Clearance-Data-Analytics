@@ -20,15 +20,12 @@
             </div>
             @endif
 
-            @if($failures ?? '')
-            <div class="alert alert-danger" role="alert">
+            @if ($errors->any())
+            <div class="alert alert-danger">
                 <strong>Errors:</strong>
-
                 <ul>
-                    @foreach ($failures as $failure)
-                    @foreach ($failure->errors() as $error)
+                    @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
-                    @endforeach
                     @endforeach
                 </ul>
             </div>
