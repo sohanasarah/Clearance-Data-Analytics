@@ -21,11 +21,7 @@ Clearance Data
                 </a>
             </div>
         </div>
-        @if ($message = Session::get('success'))
-        <div class="alert alert-success alert-block">
-            {{ $message }}
-        </div>
-        @endif
+
         <div class="row">
             <div class="col-12">
                 <!-- Default box -->
@@ -196,7 +192,7 @@ Clearance Data
     </div>
 </div>
 
-<!--MODAL-->
+<!--MODAL CSV UPLOAD-->
 <div class="modal fade" id="ajaxModel2" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -206,12 +202,14 @@ Clearance Data
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <div id="help-block">
+            </div>
             <div class="modal-body">
-                <form id="file_upload" action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
+                <form id="file_upload" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <input type="file" name="import_file" class="form-control">
+                    <input type="file" name="import_file" id="import_file" class="form-control">
                     <br>
-                    <button class="btn btn-success" id="uploadBtn">Import User Data</button>
+                    <button class="btn btn-success" id="uploadBtn">Upload</button>
                 </form>
             </div>
         </div>
@@ -245,6 +243,52 @@ Clearance Data
             $('#file_upload').trigger("reset");
             $('#uploadBtn').val("upload-file");
             $('#ajaxModel2').modal('show');
+
+        });
+
+        $('#uploadBtn').click(function (e) {
+            e.preventDefault();
+            $(this).html('Uploading..');
+
+            var fileInput = $('input[type=file]')[0].files[0];
+            var formData = new FormData();
+            formData.append('import_file', fileInput);
+            //console.log(formData.get('import_file'));
+
+            if(fileInput){
+                $.ajax({
+                    url: "{{ route('clearance.import') }}",
+                    type: "POST",
+                    dataType: 'json',
+                    cache : false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function (response) {
+                        console.log(response);
+                        window.location.reload();
+                        toastr.success(response.success);
+                    },
+                    error: function (data) {
+                        var errors = data.responseJSON.message;
+                        console.log(errors);
+
+                        errorsHtml = '<div class="alert alert-danger"><strong>Errors:</strong><ul>';
+                        $.each( errors, function( key, value ) {
+                            errorsHtml += '<li>' + value + '</li>'; //showing only the first error.
+                        });
+                        errorsHtml += '</ul></div>';
+                            
+                        $('#help-block').html(errorsHtml);
+                        $('#uploadBtn').html('Upload');
+                    }
+                });
+            }else{
+                errorsHtml = '<div class="alert alert-danger"><strong>Errors:</strong> No File Selected <d/iv>';
+                $('#help-block').html(errorsHtml);
+                $('#uploadBtn').html('Upload');
+            }
+            
         });
 
         $('body').on('click', '.editclearance', function () {

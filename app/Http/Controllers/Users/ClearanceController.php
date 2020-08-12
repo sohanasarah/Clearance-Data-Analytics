@@ -10,6 +10,7 @@ use clearance_data_analytics\Item;
 use Illuminate\Support\Facades\Validator;
 
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
 use clearance_data_analytics\Imports\ClearanceImport;
 
 class ClearanceController extends Controller
@@ -27,21 +28,21 @@ class ClearanceController extends Controller
     public function index()
     {
         /* Clearance table joining Calendar, Item tables (one to many relationship). Configuration done in Models */
-        $clearance = Clearance::with('calendar', 'item')->orderBy('id','asc')->get();
-        
+        $clearance = Clearance::with('calendar', 'item')->orderBy('id', 'asc')->get();
+
         /* for dropdown options */
         $items = Item::select('id', 'item_code', 'item_name')
-                                ->where('status','active')
-                                ->orderBy('id')
-                                ->get();
+            ->where('status', 'active')
+            ->orderBy('id')
+            ->get();
         $calendar = Calendar::select('calendar_year', 'calendar_period')
-                                ->where('status','active')
-                                ->orderBy('id')
-                                ->get();
-        
-        return view('master.clearance.index')->with('clearance',$clearance)
-                                                ->with('items', $items)
-                                                ->with('calendar', $calendar);
+            ->where('status', 'active')
+            ->orderBy('id')
+            ->get();
+
+        return view('master.clearance.index')->with('clearance', $clearance)
+            ->with('items', $items)
+            ->with('calendar', $calendar);
     }
 
     /**
@@ -62,8 +63,8 @@ class ClearanceController extends Controller
      */
     public function store(Request $request)
     {
-         //Validate the Data
-         $validatedData = Validator::make($request->all(), [
+        //Validate the Data
+        $validatedData = Validator::make($request->all(), [
             'year' => 'required|numeric',
             'month' => 'required|numeric',
             'item_id' => 'required|numeric',
@@ -81,9 +82,9 @@ class ClearanceController extends Controller
             );
         } else {
             try {
-                $calendar_data = Calendar::where('calendar_year',request('year'))
-                                        ->Where('calendar_period', request('month'))
-                                        ->first();
+                $calendar_data = Calendar::where('calendar_year', request('year'))
+                    ->Where('calendar_period', request('month'))
+                    ->first();
 
                 $data = Clearance::updateOrCreate(
                     ['id' => $request->clearance_id],
@@ -161,21 +162,39 @@ class ClearanceController extends Controller
     {
         Clearance::find($id)->delete();
 
-        return response()->json(['success' => 'true','message'=>'Clearance Has Been Deleted!']);
+        return response()->json(['success' => 'true', 'message' => 'Clearance Has Been Deleted!']);
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
 
-    public function import(Request $request) 
+    public function import(Request $request)
     {
-        $request->validate([
-            'import_file' => 'required'
+
+        $validatedData = Validator::make($request->all(), [
+            'import_file' => 'required|mimes:csv,txt'
         ]);
-        
-        Excel::import(new ClearanceImport,request()->file('import_file'));
-           
-        return response()->json(['success','File Uploaded Successfully!']);
+
+        if ($validatedData->fails()) {
+            return response()->json(
+                ['message' => $validatedData->errors()->all()],
+                400
+            );
+        } else {
+            try {
+                Excel::import(new ClearanceImport, request()->file('import_file'));
+            } catch (ValidationException $e) {
+                //dd($e);
+                $failures = $e->failures();
+                $jsonOutput = [];
+
+                foreach ($failures as $failure) {
+                    $jsonOutput[$failure->attribute()] = $failure->errors();
+                }
+                return response()->json(['message' => $jsonOutput], 400);
+            }
+            return response()->json(['success' => 'File Uploaded Successfully!']);
+        }
     }
 }

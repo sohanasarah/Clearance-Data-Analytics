@@ -62,11 +62,13 @@ Deposit Data
                                     <td>{{$deposit->sd_deposit}}</td>
                                     <td>{{$deposit->hdsc_deposit}}</td>
                                     <td class="project-actions text-right">
-                                        <a class="btn btn-info btn-sm editDeposit" href="javascript:void(0)" data-id="{{ $deposit->id }}">
+                                        <a class="btn btn-info btn-sm editDeposit" href="javascript:void(0)"
+                                            data-id="{{ $deposit->id }}">
                                             <i class="fas fa-pencil-alt">
                                             </i>
                                         </a>
-                                        <a class="btn btn-danger btn-sm deleteDeposit" href="javascript:void(0)" data-id="{{ $deposit->id }}">
+                                        <a class="btn btn-danger btn-sm deleteDeposit" href="javascript:void(0)"
+                                            data-id="{{ $deposit->id }}">
                                             <i class="fas fa-trash">
                                             </i>
                                         </a>
@@ -116,7 +118,8 @@ Deposit Data
                                 <select class="form-control" id="year" name="year">
                                     <option selected disabled>Select Year</option>
                                     @foreach ($distinct_calendar as $calendar_data)
-                                    <option value="{{ $calendar_data->calendar_year }}">{{ $calendar_data->calendar_year }}
+                                    <option value="{{ $calendar_data->calendar_year }}">
+                                        {{ $calendar_data->calendar_year }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -189,6 +192,30 @@ Deposit Data
     </div>
 </div>
 
+<!--MODAL CSV UPLOAD-->
+<div class="modal fade" id="ajaxModel2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title">CSV Upload</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="help-block">
+            </div>
+            <div class="modal-body">
+                <form id="file_upload" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="file" name="import_file" id="import_file" class="form-control">
+                    <br>
+                    <button class="btn btn-success" id="uploadBtn">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('page-script')
@@ -210,6 +237,57 @@ Deposit Data
             $('#saveBtn').val("create-deposit");
             $('#ajaxModel').modal('show');            
             $('#deposit_id').val('');
+        });
+
+        $('#uploadCSV').click(function () {
+            $('#file_upload').trigger("reset");
+            $('#uploadBtn').val("upload-file");
+            $('#ajaxModel2').modal('show');
+
+        });
+
+        $('#uploadBtn').click(function (e) {
+            e.preventDefault();
+            $(this).html('Uploading..');
+
+            var fileInput = $('input[type=file]')[0].files[0];
+            var formData = new FormData();
+            formData.append('import_file', fileInput);
+            //console.log(formData.get('import_file'));
+
+            if(fileInput){
+                $.ajax({
+                    url: "{{ route('deposit.import') }}",
+                    type: "POST",
+                    dataType: 'json',
+                    cache : false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function (response) {
+                        console.log(response);
+                        window.location.reload();
+                        toastr.success(response.success);
+                    },
+                    error: function (data) {
+                        console.log('errors:', data);
+                        var errors = data.responseJSON.message;
+                        errorsHtml = '<div class="alert alert-danger"><strong>Errors:</strong><ul>';
+                        $.each( errors, function( key, value ) {
+                            errorsHtml += '<li>' + value + '</li>'; //showing only the first error.
+                        });
+                        errorsHtml += '</ul></div>';
+                            
+                        $('#help-block').html(errorsHtml);
+                        $('#uploadBtn').html('Upload');
+                    }
+                });
+            }else{
+                errorsHtml = '<div class="alert alert-danger"><strong>Errors:</strong> No File Selected <d/iv>';
+                $('#help-block').html(errorsHtml);
+                $('#uploadBtn').html('Upload');
+            }
+            
         });
 
         $('body').on('click', '.editDeposit', function () {

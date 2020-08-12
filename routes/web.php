@@ -22,7 +22,9 @@ Route::resource('calendar','Users\CalendarController');
 Route::resource('item','Users\ItemController');
 Route::resource('deposit','Users\DepositController');
 Route::resource('clearance','Users\ClearanceController');
+Route::post('clearance/import', 'Users\ClearanceController@import')->name('clearance.import');
+Route::post('deposit/import', 'Users\DepositController@import')->name('deposit.import');
 
 //ImportExportController
-Route::get('import', 'Users\ImportExportController@importExportView');
-Route::post('import', 'Users\ImportExportController@import')->name('import');
+// Route::get('import', 'Users\ImportExportController@importExportView');
+// Route::post('import', 'Users\ImportExportController@import')->name('import');

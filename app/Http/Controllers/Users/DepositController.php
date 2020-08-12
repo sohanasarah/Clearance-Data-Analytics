@@ -10,6 +10,10 @@ use clearance_data_analytics\Deposit;
 use clearance_data_analytics\Calendar;
 use Illuminate\Support\Facades\Validator;
 
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
+use clearance_data_analytics\Imports\DepositImport;
+
 class DepositController extends Controller
 {
     public function __construct()
@@ -25,16 +29,15 @@ class DepositController extends Controller
     {
 
         /* Deposit table joining Calendar, Manufacture tables (one to many relationship). Configuration done in Models */
-         $deposits = Deposit::with('calendar', 'manufacturer')->orderBy('id','asc')->get();
-        
-        /* for dropdown options */
-        $manufacturers = Manufacturer::where('status','active')->orderBy('id')->get(['id', 'short_name']);
-        $calendar = Calendar::where('status','active')->orderBy('id')->get(['calendar_year', 'calendar_period']);
+        $deposits = Deposit::with('calendar', 'manufacturer')->orderBy('id', 'asc')->get();
 
-        return view('master.deposits.index')->with('deposits',$deposits)
-                                        ->with('manufacturers', $manufacturers)
-                                        ->with('calendar', $calendar);
-        
+        /* for dropdown options */
+        $manufacturers = Manufacturer::where('status', 'active')->orderBy('id')->get(['id', 'short_name']);
+        $calendar = Calendar::where('status', 'active')->orderBy('id')->get(['calendar_year', 'calendar_period']);
+
+        return view('master.deposits.index')->with('deposits', $deposits)
+            ->with('manufacturers', $manufacturers)
+            ->with('calendar', $calendar);
     }
 
     /**
@@ -57,12 +60,12 @@ class DepositController extends Controller
     {
         //Validate the Data
         $validatedData = Validator::make($request->all(), [
-            'year' => 'required|max:4',
-            'month' => 'required|max:2',
+            'year'            => 'required|max:4',
+            'month'           => 'required|max:2',
             'manufacturer_id' => 'required|numeric',
-            'vat_deposit' => 'required|numeric',
-            'sd_deposit' => 'required|numeric',
-            'hdsc_deposit'  => 'required|numeric'
+            'vat_deposit'     => 'required|numeric',
+            'sd_deposit'      => 'required|numeric',
+            'hdsc_deposit'    => 'required|numeric'
         ]);
 
         if ($validatedData->fails()) {
@@ -75,9 +78,9 @@ class DepositController extends Controller
             );
         } else {
             try {
-                $calendar_data = Calendar::where('calendar_year',request('year'))
-                                        ->orWhere('calendar_period', request('month'))
-                                        ->first();
+                $calendar_data = Calendar::where('calendar_year', request('year'))
+                    ->orWhere('calendar_period', request('month'))
+                    ->first();
 
                 // $data = new Deposit();
                 // $data->calendar_id = $calendar_data->id;
@@ -91,7 +94,7 @@ class DepositController extends Controller
                     ['id' => $request->deposit_id],
                     [
                         'calendar_id'    => $calendar_data->id,
-                        'manufacturer_id'=> $request->manufacturer_id,
+                        'manufacturer_id' => $request->manufacturer_id,
                         'vat_deposit'    => $request->vat_deposit,
                         'sd_deposit'     => $request->sd_deposit,
                         'hdsc_deposit'   => $request->hdsc_deposit,
@@ -99,7 +102,7 @@ class DepositController extends Controller
                 );
 
                 error_log($data);
-              
+
                 return response()->json(
                     [
                         'success' => 'true',
@@ -164,6 +167,35 @@ class DepositController extends Controller
     {
         Deposit::find($id)->delete();
 
-        return response()->json(['success' => 'true','message'=>'Deposit Record Has Been Deleted!']);
+        return response()->json(['success' => 'true', 'message' => 'Deposit Record Has Been Deleted!']);
+    }
+
+    public function import(Request $request)
+    {
+        $validatedData = Validator::make($request->all(), [
+            'import_file' => 'required|mimes:csv,txt'
+        ]);
+
+        if ($validatedData->fails()) {
+            return response()->json(
+                ['message' => $validatedData->errors()->all()],400
+            );
+        } else {
+            try {
+
+                Excel::import(new DepositImport, request()->file('import_file'));
+                
+            } catch (ValidationException $e) {
+                $failures = $e->failures();
+                $jsonOutput = [];
+
+                foreach ($failures as $failure) {
+                    $jsonOutput[$failure->attribute()] = $failure->errors();
+                }
+                return response()->json(['message' => $jsonOutput], 400);
+            }
+            return response()->json(['success'=> 'File Uploaded Successfully!']);
+
+        }
     }
 }

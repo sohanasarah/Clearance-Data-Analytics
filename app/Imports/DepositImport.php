@@ -2,18 +2,19 @@
 
 namespace clearance_data_analytics\Imports;
 
-use clearance_data_analytics\Clearance;
-use clearance_data_analytics\Calendar;
-use clearance_data_analytics\Item;
-
 use Maatwebsite\Excel\Concerns\ToModel;
+use clearance_data_analytics\Deposit;
+use clearance_data_analytics\Calendar;
+use clearance_data_analytics\Manufacturer;
+
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Validators\Failure;
 
-class ClearanceImport implements ToModel, WithHeadingRow, WithValidation, WithBatchInserts, Failure
+class DepositImport implements ToModel, WithHeadingRow, WithValidation, WithBatchInserts
 {
+
     protected $rowNum;
 
     /**
@@ -29,7 +30,7 @@ class ClearanceImport implements ToModel, WithHeadingRow, WithValidation, WithBa
             ->Where('calendar_period', $row['month'])
             ->first();
 
-        $item = Item::where('item_code', $row['item'])->first();
+        $manufacturer = Manufacturer::where('short_name', $row['manufacturer'])->first();
 
         if (is_null($calendar)) {
             $error[] = 'Calendar Record does not exist! Try Again';
@@ -40,9 +41,9 @@ class ClearanceImport implements ToModel, WithHeadingRow, WithValidation, WithBa
             );
             return null;
         }
-        if (is_null($item)) {
-            $error[] = 'Item code does not exist in Item Master! Try Again';
-            $failures[] = new Failure($rowNum, 'item', $error, $row);
+        if (is_null($manufacturer)) {
+            $error[] = 'Manufacturer does not exist in Master! Try Again';
+            $failures[] = new Failure($rowNum, 'manufacturer', $error, $row);
             throw new \Maatwebsite\Excel\Validators\ValidationException(
                 \Illuminate\Validation\ValidationException::withMessages($error),
                 $failures
@@ -50,25 +51,27 @@ class ClearanceImport implements ToModel, WithHeadingRow, WithValidation, WithBa
             return null;
         }
 
-        $row['calendar_id'] = $calendar->id;
-        $row['item_id'] = $item->id;
+        $row['calendar_id']         = $calendar->id;
+        $row['manufacturer_id']     = $manufacturer->id;
 
-        return new Clearance([
-            'calendar_id'  => $row['calendar_id'],
-            'item_id'      => $row['item_id'],
-            'measure'      => $row['measure'],
-            'figure'       => $row['figure']
+        return new Deposit([
+            'calendar_id'    => $row['calendar_id'],
+            'manufacturer_id'=> $row['manufacturer_id'],
+            'vat_deposit'    => $row['vat_deposit'],
+            'sd_deposit'     => $row['sd_deposit'],
+            'hdsc_deposit'   => $row['hdsc_deposit'],
         ]);
     }
 
     public function rules(): array
     {
         return [
-            'year' => 'required|numeric',
-            'month' => 'required|numeric',
-            'item' => 'required|numeric',
-            'figure' => 'required|numeric',
-            'measure'  => 'required|max:48'
+            'year' => 'required|max:4',
+            'month' => 'required|max:2',
+            'manufacturer' => 'required|string',
+            'vat_deposit' => 'required|numeric',
+            'sd_deposit' => 'required|numeric',
+            'hdsc_deposit'  => 'required|numeric'
         ];
     }
 
