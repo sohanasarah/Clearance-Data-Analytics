@@ -66,6 +66,8 @@
         };
 
     </script>
+    
+
     @yield('page-script')
     @include('inc.dynamic-sidebar')
     @include('inc.footer')

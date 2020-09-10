@@ -1,12 +1,13 @@
 <?php
 
-namespace clearance_data_analytics\Http\Controllers\Users;
+namespace clearance_data_analytics\Http\Controllers\Master;
 
 use Illuminate\Http\Request;
 use clearance_data_analytics\Http\Controllers\Controller;
 use clearance_data_analytics\Clearance;
 use clearance_data_analytics\Calendar;
 use clearance_data_analytics\Item;
+use clearance_data_analytics\Code;
 use Illuminate\Support\Facades\Validator;
 
 use Maatwebsite\Excel\Facades\Excel;
@@ -28,13 +29,20 @@ class ClearanceController extends Controller
     public function index()
     {
         /* Clearance table joining Calendar, Item tables (one to many relationship). Configuration done in Models */
-        $clearance = Clearance::with('calendar', 'item')->orderBy('id', 'asc')->get();
+        $clearance = Clearance::with('calendar', 'item')->orderBy('id', 'desc')->get();
 
         /* for dropdown options */
         $items = Item::select('id', 'item_code', 'item_name')
             ->where('status', 'active')
             ->orderBy('id')
             ->get();
+        
+        $codes = Code::select('id', 'code_value')
+         ->where('field_name','measure')
+         ->where('status', 'active')
+         ->orderBy('id')
+         ->get();
+
         $calendar = Calendar::select('calendar_year', 'calendar_period')
             ->where('status', 'active')
             ->orderBy('id')
@@ -42,6 +50,7 @@ class ClearanceController extends Controller
 
         return view('master.clearance.index')->with('clearance', $clearance)
             ->with('items', $items)
+            ->with('codes', $codes)
             ->with('calendar', $calendar);
     }
 

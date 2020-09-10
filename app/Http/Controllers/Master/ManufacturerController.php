@@ -1,15 +1,16 @@
 <?php
 
-namespace clearance_data_analytics\Http\Controllers\Users;
+namespace clearance_data_analytics\Http\Controllers\Master;
 
-use clearance_data_analytics\Brand;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use clearance_data_analytics\Http\Controllers\Controller;
-use clearance_data_analytics\Manufacturer;
-use clearance_data_analytics\Segment;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use clearance_data_analytics\Manufacturer;
 
-class BrandController extends Controller
+class ManufacturerController extends Controller
 {
     public function __construct()
     {
@@ -23,16 +24,9 @@ class BrandController extends Controller
      */
     public function index()
     {
-        /* Brand table joining manufacturer,segment tables (one to one relationship). Configuration done in Models */
-        $brands = Brand::with('manufacturer', 'segment')->orderBy('id','asc')->get();
-
-        /* for dropdown options */
-        $manufacturers = Manufacturer::where('status','active')->orderBy('id')->get(['id', 'short_name']);
-        $segments = Segment::where('status','active')->orderBy('id')->get(['id', 'internal_segment']);
-
-        return view('master.brands.index')->with('brands',$brands)
-                                        ->with('manufacturers', $manufacturers)
-                                        ->with('segments', $segments);
+        $list = Manufacturer::orderBy('id', 'desc')->get();
+        return view('master.manufacturers.index')
+            ->with('list', $list);
     }
 
     /**
@@ -52,14 +46,11 @@ class BrandController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {    
+    {
         //Validate the Data
         $validatedData = Validator::make($request->all(), [
-            'brand_name' => 'required|max:48',
-            'short_name' => 'required|max:24',
-            'segment_id' => 'required',
-            'manufacturer_id' => 'required',
-            'status'  => 'required'
+            'full_name' => 'required|max:48',
+            'short_name' => 'required|max:8',
         ]);
 
         if ($validatedData->fails()) {
@@ -72,25 +63,15 @@ class BrandController extends Controller
             );
         } else {
             try {
-                // $data = new Brand();
-                // $data->brand_name = request('brand_name');
-                // $data->short_name = request('short_name');
-                // $data->manufacturer_id = request('manufacturer_id');
-                // $data->segment_id = request('segment_id');
-                // $data->status = request('status');
-                // $data->save();
-
-                $data = Brand::updateOrCreate(
-                    ['id' => $request->brand_id],
+                error_log($request->id);
+                $data = Manufacturer::updateOrCreate(
+                    ['id' => $request->manufacturer_id],
                     [
-                        'brand_name'      => $request->brand_name,
-                        'short_name'      => $request->short_name,
-                        'segment_id'      => $request->segment_id,
-                        'manufacturer_id' => $request->manufacturer_id,
-                        'status'          => $request->status
+                        'full_name' => $request->full_name,
+                        'short_name' => $request->short_name,
+
                     ]
                 );
-
                 error_log($data);
 
                 return response()->json(
@@ -103,7 +84,7 @@ class BrandController extends Controller
                 //throw $th;
                 return response()->json(
                     [
-                        'success' => false,
+                        'success' => 'false',
                         'errors' => $th->getMessage(),
                     ],
                     400
@@ -131,8 +112,8 @@ class BrandController extends Controller
      */
     public function edit($id)
     {
-        $brand = Brand::find($id);
-        return response()->json($brand);
+        $manufacturer = Manufacturer::find($id);
+        return response()->json($manufacturer);
     }
 
     /**
@@ -155,7 +136,8 @@ class BrandController extends Controller
      */
     public function destroy($id)
     {
-        Brand::find($id)->delete();
-        return response()->json(['success' => 'true','message'=>'Brand Has Been Deleted!']);
+        Manufacturer::find($id)->delete();
+
+        return response()->json(['success' => 'true','message'=>'Manufacturer Has Been Deleted!']);
     }
 }

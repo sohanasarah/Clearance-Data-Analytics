@@ -26,3 +26,5 @@
 <script src="{{ asset('plugins/toastr/toastr.min.js') }}"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset('dist/js/adminlte.js') }}"></script>
+{{-- GOOGLE CHART  --}}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

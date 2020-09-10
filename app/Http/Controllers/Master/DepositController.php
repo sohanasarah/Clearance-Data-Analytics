@@ -1,6 +1,6 @@
 <?php
 
-namespace clearance_data_analytics\Http\Controllers\Users;
+namespace clearance_data_analytics\Http\Controllers\Master;
 
 
 use Illuminate\Http\Request;
@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 use clearance_data_analytics\Imports\DepositImport;
+use Illuminate\Support\Facades\Storage;
 
 class DepositController extends Controller
 {
@@ -198,4 +199,5 @@ class DepositController extends Controller
 
         }
     }
+    
 }

@@ -13,18 +13,16 @@
 
 Auth::routes();
 
-Route::get('/', 'Users\DashboardController@index')->name('dashboard');
+Route::get('/', 'Master\DashboardController@index')->name('dashboard');
 
-Route::resource('manufacturer','Users\ManufacturerController');
-Route::resource('segment','Users\SegmentController');
-Route::resource('brand','Users\BrandController');
-Route::resource('calendar','Users\CalendarController');
-Route::resource('item','Users\ItemController');
-Route::resource('deposit','Users\DepositController');
-Route::resource('clearance','Users\ClearanceController');
-Route::post('clearance/import', 'Users\ClearanceController@import')->name('clearance.import');
-Route::post('deposit/import', 'Users\DepositController@import')->name('deposit.import');
+Route::resource('manufacturer','Master\ManufacturerController');
+Route::resource('segment','Master\SegmentController');
+Route::resource('brand','Master\BrandController');
+Route::resource('calendar','Master\CalendarController');
+Route::resource('item','Master\ItemController');
+Route::resource('deposit','Master\DepositController');
+Route::resource('clearance','Master\ClearanceController');
+Route::post('clearance/import', 'Master\ClearanceController@import')->name('clearance.import');
+Route::post('deposit/import', 'Master\DepositController@import')->name('deposit.import');
 
-//ImportExportController
-// Route::get('import', 'Users\ImportExportController@importExportView');
-// Route::post('import', 'Users\ImportExportController@import')->name('import');
+Route::get('segment_chart', 'Charts\SegmentChartsController@index')->name('charts.segments');

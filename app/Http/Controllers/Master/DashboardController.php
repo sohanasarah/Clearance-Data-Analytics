@@ -1,6 +1,6 @@
 <?php
 
-namespace clearance_data_analytics\Http\Controllers\Users;
+namespace clearance_data_analytics\Http\Controllers\Master;
 
 use Illuminate\Http\Request;
 use clearance_data_analytics\Http\Controllers\Controller;

@@ -21,4 +21,5 @@ class Clearance extends Model
     {
         return $this->belongsTo('clearance_data_analytics\Item', 'item_id');
     }
+
 }

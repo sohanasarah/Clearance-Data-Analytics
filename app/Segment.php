@@ -10,7 +10,7 @@ class Segment extends Model
     
     public function brand()
     {
-        return $this->hasOne('clearance_data_analytics\Brand');
+        return $this->hasMany('clearance_data_analytics\Brand');
     }
 
 }

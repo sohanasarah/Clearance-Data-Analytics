@@ -1,15 +1,15 @@
 <?php
 
-namespace clearance_data_analytics\Http\Controllers\Users;
+namespace clearance_data_analytics\Http\Controllers\Master;
 
-use clearance_data_analytics\Calendar;
 use Illuminate\Http\Request;
 use clearance_data_analytics\Http\Controllers\Controller;
-use clearance_data_analytics\Manufacturer;
-use clearance_data_analytics\Segment;
 use Illuminate\Support\Facades\Validator;
-class CalendarController extends Controller
+use clearance_data_analytics\Segment;
+
+class SegmentController extends Controller
 {
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -22,9 +22,8 @@ class CalendarController extends Controller
      */
     public function index()
     {
-        $calendar = Calendar::orderBy('id')->get();
-
-        return view('master.calendar.index')->with('calendar', $calendar);
+        $list =  Segment::orderBy('id','asc')->get();
+        return view('master.segments.index')->with('list', $list);
     }
 
     /**
@@ -44,18 +43,15 @@ class CalendarController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {    
+    {
         //Validate the Data
         $validatedData = Validator::make($request->all(), [
-            'year' => 'required|numeric',
-            'period' => 'required|numeric',
-            'fiscal_year' => 'required|string',
-            'fiscal_period' => 'required|numeric',
-            'month_name'  => 'required|string',
-            'expired'  => 'required|string',
-            'status'  => 'required|string'
+            'internal_segment' => 'required|max:24',
+            'external_segment1' => 'required|max:24',
+            'external_segment2' => 'nullable|max:24',
+            'status'  => 'required'
         ]);
-
+        
         if ($validatedData->fails()) {
             return response()->json(
                 [
@@ -66,31 +62,18 @@ class CalendarController extends Controller
             );
         } else {
             try {
-                // $data = new Calendar();
-                // $data->calendar_year =   request('year');
-                // $data->calendar_period = request('period');
-                // $data->month_name =  request('month_name');
-                // $data->fiscal_year = request('fiscal_year');
-                // $data->fiscal_period = request('fiscal_period');
-                // $data->expired = request('expired');
-                // $data->status = request('status');
-                // $data->save();
-
-                $data = Calendar::updateOrCreate(
-                    ['id' => $request->calendar_id],
+                $data = Segment::updateOrCreate(
+                    ['id' => $request->segment_id],
                     [
-                        'calendar_year'  => $request->year,
-                        'calendar_period'=> $request->period,
-                        'fiscal_year'   => $request->fiscal_year,
-                        'fiscal_period' => $request->fiscal_period,
-                        'month_name'    => $request->month_name,
-                        'expired'       => $request->expired,
-                        'status'        => $request->status
+                        'internal_segment'  => $request->internal_segment,
+                        'external_segment1' => $request->external_segment1,
+                        'external_segment2' => $request->external_segment2,
+                        'status'            => $request->status
                     ]
                 );
 
                 error_log($data);
-                
+
                 return response()->json(
                     [
                         'success' => 'true',
@@ -108,8 +91,21 @@ class CalendarController extends Controller
                 );
             }
         }
+
     }
-        /**
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -117,8 +113,9 @@ class CalendarController extends Controller
      */
     public function edit($id)
     {
-        $calendar = Calendar::find($id);
-        return response()->json($calendar);
+        //
+        $segment = Segment::find($id);
+        return response()->json($segment);
     }
 
     /**
@@ -141,7 +138,8 @@ class CalendarController extends Controller
      */
     public function destroy($id)
     {
-        Calendar::find($id)->delete();
-        return response()->json(['success' => 'true','message'=>'Calendar Record Has Been Deleted!']);
+        Segment::find($id)->delete();
+
+        return response()->json(['success' => 'true','message'=>'Segment Has Been Deleted!']);
     }
 }

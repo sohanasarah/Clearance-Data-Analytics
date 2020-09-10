@@ -1,15 +1,20 @@
 <?php
 
-namespace clearance_data_analytics\Http\Controllers\Users;
+namespace clearance_data_analytics\Http\Controllers\Master;
 
+use clearance_data_analytics\Calendar;
 use Illuminate\Http\Request;
 use clearance_data_analytics\Http\Controllers\Controller;
-use clearance_data_analytics\Brand;
-use clearance_data_analytics\Item;
+use clearance_data_analytics\Manufacturer;
+use clearance_data_analytics\Segment;
 use Illuminate\Support\Facades\Validator;
-
-class ItemController extends Controller
+class CalendarController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,14 +22,9 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $items = Item::with('brand')->orderBy('id', 'asc')->get();
+        $calendar = Calendar::orderBy('id')->get();
 
-        /*for dropdown options*/
-        $brands = Brand::where('status', 'active')->orderBy('id')->get(['id', 'brand_name']);
-
-
-        return view('master.items.index')->with('items', $items)
-            ->with('brands', $brands);
+        return view('master.calendar.index')->with('calendar', $calendar);
     }
 
     /**
@@ -44,13 +44,16 @@ class ItemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {    
         //Validate the Data
         $validatedData = Validator::make($request->all(), [
-            'item_code' => 'required|max:16',
-            'item_name' => 'required|max:48',
-            'brand_id' => 'required',
-            'status'  => 'required'
+            'year' => 'required|numeric',
+            'period' => 'required|numeric',
+            'fiscal_year' => 'required|string',
+            'fiscal_period' => 'required|numeric',
+            'month_name'  => 'required|string',
+            'expired'  => 'required|string',
+            'status'  => 'required|string'
         ]);
 
         if ($validatedData->fails()) {
@@ -63,25 +66,31 @@ class ItemController extends Controller
             );
         } else {
             try {
-                // $data = new Item();
-                // $data->item_code = request('item_code');
-                // $data->item_name = request('item_name');
-                // $data->brand_id = request('brand_id');
+                // $data = new Calendar();
+                // $data->calendar_year =   request('year');
+                // $data->calendar_period = request('period');
+                // $data->month_name =  request('month_name');
+                // $data->fiscal_year = request('fiscal_year');
+                // $data->fiscal_period = request('fiscal_period');
+                // $data->expired = request('expired');
                 // $data->status = request('status');
                 // $data->save();
 
-                $data = Item::updateOrCreate(
-                    ['id' => $request->item_id],
+                $data = Calendar::updateOrCreate(
+                    ['id' => $request->calendar_id],
                     [
-                        'item_name'       => $request->item_name,
-                        'item_code'       => $request->item_code,
-                        'brand_id'        => $request->brand_id,
-                        'status'          => $request->status
+                        'calendar_year'  => $request->year,
+                        'calendar_period'=> $request->period,
+                        'fiscal_year'   => $request->fiscal_year,
+                        'fiscal_period' => $request->fiscal_period,
+                        'month_name'    => $request->month_name,
+                        'expired'       => $request->expired,
+                        'status'        => $request->status
                     ]
                 );
 
                 error_log($data);
-
+                
                 return response()->json(
                     [
                         'success' => 'true',
@@ -100,19 +109,7 @@ class ItemController extends Controller
             }
         }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
+        /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -120,8 +117,8 @@ class ItemController extends Controller
      */
     public function edit($id)
     {
-        $item = Item::find($id);
-        return response()->json($item);
+        $calendar = Calendar::find($id);
+        return response()->json($calendar);
     }
 
     /**
@@ -144,8 +141,7 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
-        Item::find($id)->delete();
-        return response()->json(['success' => 'true', 'message'=>'Item has been deleted!']);
-
+        Calendar::find($id)->delete();
+        return response()->json(['success' => 'true','message'=>'Calendar Record Has Been Deleted!']);
     }
 }

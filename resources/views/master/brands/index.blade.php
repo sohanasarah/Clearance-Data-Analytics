@@ -51,7 +51,7 @@ Brands
                                     <td>{{$brand->brand_name}}</td>
                                     <td>{{$brand->short_name}}</td>
                                     <td>{{$brand->segment->internal_segment}}</td>
-                                    <td>{{$brand->manufacturer->full_name}}</td>
+                                    <td>{{$brand->manufacturer->short_name}}</td>
                                    
                                     <td class="project-state">
                                         @if ($brand->status == 'active')
@@ -137,12 +137,14 @@ Brands
                     </div>
 
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select class="form-control" id="status" name="status">
-                            <option selected disabled>Select status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" id="status1" value="active" checked>
+                            <label class="form-check-label">Active</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" id="status2" value="inactive">
+                            <label class="form-check-label">Inactive</label>
+                        </div>
                     </div>
 
                     <div class="col-sm-offset-2 col-sm-10">

@@ -10,6 +10,11 @@ Deposit Data
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-12">
+                <a class="btn btn-warning float-right" href="{{ asset('templates/deposit_file.csv') }}" 
+                    style="margin-left: 5px;">
+                    <i class="fas fa-file-download"></i>
+                    Download Template
+                </a>
                 <a class="btn btn-info float-right" href="javascript:void(0)" id="uploadCSV">
                     <i class="fas fa-file-upload"></i>
                     Upload CSV
@@ -19,6 +24,7 @@ Deposit Data
                     <i class="fas fa-plus"></i>
                     Create New
                 </a>
+
             </div>
         </div>
         <div class="row">

@@ -10,6 +10,11 @@ Clearance Data
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-12">
+                <a class="btn btn-warning float-right" href="{{ asset('templates/clearance_file.csv') }}"
+                    style="margin-left: 5px;">
+                    <i class="fas fa-file-download"></i>
+                    Download Template
+                </a>
                 <a class="btn btn-primary float-right" href="javascript:void(0)" id="uploadCSV">
                     <i class="fas fa-file-upload"></i>
                     Upload CSV
@@ -66,7 +71,7 @@ Clearance Data
 
                                 @endphp
                                 <tr>
-                                    <td>{{$i}}</td>
+                                    <td>{{$clearance_data->id}}</td>
                                     <td>{{$clearance_data->item->item_name}}</td>
                                     <td>{{$clearance_data->calendar->calendar_year}}</td>
                                     <td>{{$clearance_data->calendar->month_name}}</td>
@@ -169,8 +174,13 @@ Clearance Data
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="measure">Measure</label>
-                                <input type="text" class="form-control" id="measure" name="measure"
-                                    placeholder="Measure">
+                                <select class="form-control" id="measure" name="measure">
+                                    <option selected disabled>Select Measure</option>
+                                    @foreach ($codes as $code)
+                                    <option value="{{ $code->code_value }}">{{ $code->code_value }}
+                                    </option>
+                                    @endforeach
+                                </select>
 
                             </div>
                         </div>
@@ -222,7 +232,7 @@ Clearance Data
 <script>
     $(function () {
         $("#myTable").DataTable({
-            "responsive": true, "autoWidth": false, 
+            "responsive": true, "autoWidth": false,  "order": [[ 0, "desc" ]]
         });
 
         $.ajaxSetup({

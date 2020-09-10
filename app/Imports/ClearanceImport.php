@@ -5,6 +5,7 @@ namespace clearance_data_analytics\Imports;
 use clearance_data_analytics\Clearance;
 use clearance_data_analytics\Calendar;
 use clearance_data_analytics\Item;
+use clearance_data_analytics\Code;
 
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -12,7 +13,7 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Validators\Failure;
 
-class ClearanceImport implements ToModel, WithHeadingRow, WithValidation, WithBatchInserts, Failure
+class ClearanceImport implements ToModel, WithHeadingRow, WithValidation, WithBatchInserts
 {
     protected $rowNum;
 
@@ -31,6 +32,8 @@ class ClearanceImport implements ToModel, WithHeadingRow, WithValidation, WithBa
 
         $item = Item::where('item_code', $row['item'])->first();
 
+        $measure = Code::where('code_value', $row['measure'])->first();
+
         if (is_null($calendar)) {
             $error[] = 'Calendar Record does not exist! Try Again';
             $failures[] = new Failure($rowNum, 'calendar', $error, $row);
@@ -43,6 +46,15 @@ class ClearanceImport implements ToModel, WithHeadingRow, WithValidation, WithBa
         if (is_null($item)) {
             $error[] = 'Item code does not exist in Item Master! Try Again';
             $failures[] = new Failure($rowNum, 'item', $error, $row);
+            throw new \Maatwebsite\Excel\Validators\ValidationException(
+                \Illuminate\Validation\ValidationException::withMessages($error),
+                $failures
+            );
+            return null;
+        }
+        if (is_null($measure)) {
+            $error[] = 'Measure does not exist in Code Master! Try Again';
+            $failures[] = new Failure($rowNum, 'measure', $error, $row);
             throw new \Maatwebsite\Excel\Validators\ValidationException(
                 \Illuminate\Validation\ValidationException::withMessages($error),
                 $failures

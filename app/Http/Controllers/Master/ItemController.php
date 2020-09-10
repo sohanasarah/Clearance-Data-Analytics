@@ -1,22 +1,15 @@
 <?php
 
-namespace clearance_data_analytics\Http\Controllers\Users;
+namespace clearance_data_analytics\Http\Controllers\Master;
 
-use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use clearance_data_analytics\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
+use clearance_data_analytics\Brand;
+use clearance_data_analytics\Item;
 use Illuminate\Support\Facades\Validator;
-use clearance_data_analytics\Manufacturer;
 
-class ManufacturerController extends Controller
+class ItemController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -24,9 +17,14 @@ class ManufacturerController extends Controller
      */
     public function index()
     {
-        $list = Manufacturer::orderBy('id', 'desc')->get();
-        return view('master.manufacturers.index')
-            ->with('list', $list);
+        $items = Item::with('brand')->orderBy('id', 'asc')->get();
+
+        /*for dropdown options*/
+        $brands = Brand::where('status', 'active')->orderBy('id')->get(['id', 'brand_name']);
+
+
+        return view('master.items.index')->with('items', $items)
+            ->with('brands', $brands);
     }
 
     /**
@@ -49,8 +47,10 @@ class ManufacturerController extends Controller
     {
         //Validate the Data
         $validatedData = Validator::make($request->all(), [
-            'full_name' => 'required|max:48',
-            'short_name' => 'required|max:8',
+            'item_code' => 'required|max:16',
+            'item_name' => 'required|max:48',
+            'brand_id' => 'required',
+            'status'  => 'required'
         ]);
 
         if ($validatedData->fails()) {
@@ -63,15 +63,23 @@ class ManufacturerController extends Controller
             );
         } else {
             try {
-                error_log($request->id);
-                $data = Manufacturer::updateOrCreate(
-                    ['id' => $request->manufacturer_id],
-                    [
-                        'full_name' => $request->full_name,
-                        'short_name' => $request->short_name,
+                // $data = new Item();
+                // $data->item_code = request('item_code');
+                // $data->item_name = request('item_name');
+                // $data->brand_id = request('brand_id');
+                // $data->status = request('status');
+                // $data->save();
 
+                $data = Item::updateOrCreate(
+                    ['id' => $request->item_id],
+                    [
+                        'item_name'       => $request->item_name,
+                        'item_code'       => $request->item_code,
+                        'brand_id'        => $request->brand_id,
+                        'status'          => $request->status
                     ]
                 );
+
                 error_log($data);
 
                 return response()->json(
@@ -84,7 +92,7 @@ class ManufacturerController extends Controller
                 //throw $th;
                 return response()->json(
                     [
-                        'success' => 'false',
+                        'success' => false,
                         'errors' => $th->getMessage(),
                     ],
                     400
@@ -112,8 +120,8 @@ class ManufacturerController extends Controller
      */
     public function edit($id)
     {
-        $manufacturer = Manufacturer::find($id);
-        return response()->json($manufacturer);
+        $item = Item::find($id);
+        return response()->json($item);
     }
 
     /**
@@ -136,8 +144,8 @@ class ManufacturerController extends Controller
      */
     public function destroy($id)
     {
-        Manufacturer::find($id)->delete();
+        Item::find($id)->delete();
+        return response()->json(['success' => 'true', 'message'=>'Item has been deleted!']);
 
-        return response()->json(['success' => 'true','message'=>'Manufacturer Has Been Deleted!']);
     }
 }
