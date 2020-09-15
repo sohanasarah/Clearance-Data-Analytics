@@ -27,8 +27,7 @@ Brands
                     <div class="card-body">
                         <table id="myTable" class="table table-striped table-hover">
                             <thead>
-                                <tr>
-                                    <th style="width: 1%">#</th>
+                                <tr>									<th>ID</th>
                                     <th>Brand</th>
                                     <th>Short Name</th>
                                     <th>Segment</th>
@@ -37,30 +36,19 @@ Brands
                                     <th style="width: 20%" class="text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @php
-                                $i=0;
-                                @endphp
-                                @foreach ($brands as $brand)
-                                @php
-                                $i++;
-
-                                @endphp
-                                <tr>
-                                    <td>{{$i}}</td>
+                            <tbody>                                @foreach ($brands as $brand)
+                                <tr>									<td>{{$brand->id}}</td>
                                     <td>{{$brand->brand_name}}</td>
                                     <td>{{$brand->short_name}}</td>
                                     <td>{{$brand->segment->internal_segment}}</td>
-                                    <td>{{$brand->manufacturer->short_name}}</td>
-                                   
+                                    <td>{{$brand->manufacturer->short_name}}</td>   
                                     <td class="project-state">
                                         @if ($brand->status == 'active')
                                         <span class="badge badge-success">{{$brand->status}}</span>
                                         @else
                                         <span class="badge badge-danger">{{ $brand->status }}</span>
                                         @endif
-                                    </td>
-                                    
+                                    </td>                                  
                                     <td class="project-actions text-right">
                                         <a class="btn btn-info editbrand" href="javascript:void(0)" data-id="{{ $brand->id }}">
                                             <i class="fas fa-pencil-alt">
@@ -163,33 +151,27 @@ Brands
 <script>
     $(function () {
         $("#myTable").DataTable({
-            "responsive": true, "autoWidth": false, 
-        });
-
+            "responsive": true, "autoWidth": false,         });
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+            }        });
 
         $('#createNewbrand').click(function () {
             $('#brandForm').trigger("reset");
             $('#modelHeading').html("Create New Brand");
             $('#saveBtn').val("create-brand");
-            $('#ajaxModel').modal('show');            
+            $('#ajaxModel').modal('show');
             $('#brand_id').val('');
         });
 
         $('body').on('click', '.editbrand', function () {
-            var brand_id = $(this).data('id');
-            
+            var brand_id = $(this).data('id');            
             $.get("brand" +'/' + brand_id +'/edit', function (data) {
                 $('#modelHeading').html("Edit Brand");
                 $('#saveBtn').val("edit-brand");
                 $('#ajaxModel').modal('show');
-
                 $('#brand_id').val(brand_id);
-
                 $('#brand_name').val(data.brand_name);
                 $('#short_name').val(data.short_name);
                 $('#manufacturer_id').val(data.manufacturer_id);
@@ -202,7 +184,6 @@ Brands
         $('#saveBtn').click(function (e) {
             e.preventDefault();
             $(this).html('Sending..');
-
             $.ajax({
                 data: $('#brandForm').serialize(),
                 url: "",
@@ -220,28 +201,24 @@ Brands
                     alert(data.responseJSON.errors);
                     $('#saveBtn').html('Save Changes');
                 }
-            });
-        
+            });       
         });
 
         $('body').on('click', '.deletebrand', function () {
             var brand_id = $(this).data("id");
-
-            confirm("Are You sure want to delete?");
-                $.ajax({
-                    type: "DELETE",
-                    url: "brand"+'/'+brand_id,
-                    success: function (data) {
-                        window.location.reload();
-                        toastr.error(data.message);
-                    },
-                    error: function (data) {
-                        console.log('Error:', data);
-                        alert(data.responseJSON.errors);
-                    }
-                });
-            });
-    });
+            confirm("Are you sure want to delete?");
+			$.ajax({
+				type: "DELETE",
+				url: "brand"+'/'+brand_id,
+				success: function (data) {
+					window.location.reload();
+					toastr.error(data.message);
+				},
+				error: function (data) {					console.log('Error:', data);
+					alert(data.responseJSON.errors);
+				}
+			});
+		});    });
 
 </script>
 @endsection

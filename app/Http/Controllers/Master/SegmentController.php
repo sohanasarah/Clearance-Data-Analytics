@@ -46,7 +46,7 @@ class SegmentController extends Controller
     {
         //Validate the Data
         $validatedData = Validator::make($request->all(), [
-            'internal_segment' => 'required|max:24',
+            'internal_segment' => 'required|unique:segments|max:24',
             'external_segment1' => 'required|max:24',
             'external_segment2' => 'nullable|max:24',
             'status'  => 'required'

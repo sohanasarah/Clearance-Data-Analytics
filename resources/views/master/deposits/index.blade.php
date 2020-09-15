@@ -1,9 +1,7 @@
 @extends('layouts.master')
-
 @section('content-title')
 Deposit Data
 @endsection
-
 @section('content-body')
 <!-- Main content -->
 <div class="content">
@@ -36,11 +34,8 @@ Deposit Data
                     </div> --}}
                     <div class="card-body">
                         <table id="myTable" class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th style="width: 1%">
-                                        #
-                                    </th>
+                            <thead>                                <tr>
+                                    <th>ID</th>
                                     <th>Year</th>
                                     <th>Month</th>
                                     <th>Manufacturer</th>
@@ -50,17 +45,10 @@ Deposit Data
                                     <th style="width: 30%" class="text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @php
-                                $i=0;
-                                @endphp
+                            <tbody>                                
                                 @foreach ($deposits as $deposit)
-                                @php
-                                $i++;
-
-                                @endphp
                                 <tr>
-                                    <td>{{$i}}</td>
+                                    <td>{{$deposit->calendar->id}}</td>
                                     <td>{{$deposit->calendar->calendar_year}}</td>
                                     <td>{{$deposit->calendar->month_name}}</td>
                                     <td>{{$deposit->manufacturer->short_name}}</td>

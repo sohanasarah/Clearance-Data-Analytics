@@ -28,7 +28,7 @@ Manufacturers
                             <thead>
                                 <tr>
                                     <th style="width: 1%">
-                                        #
+                                        ID
                                     </th>
                                     <th style="width: 30%">
                                         Manufacturer Name
@@ -44,38 +44,18 @@ Manufacturers
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @php
-                                    $i=0;
-                                @endphp
-
-                                @foreach ($list as $list_item)
-                                @php
-                                $i++;
-
-                                @endphp
-                                <tr>
-                                    <td>{{$i}}</td>
+                            <tbody>                                @foreach ($list as $list_item)                                <tr>
+                                    <td>{{$list_item->id}}</td>
                                     <td>{{$list_item->full_name}}</td>
-                                    <td>{{$list_item->short_name}}</td>
-                                    
+                                    <td>{{$list_item->short_name}}</td>                                    
                                     <td class="project-state">
                                         @if ($list_item->status == 'active')
                                         <span class="badge badge-success">{{$list_item->status}}</span>
-                                        @else
-                                        <span class="badge badge-danger">{{$list_item->status}}</span>
-                                        @endif
-                                    </td>
-                                    
+                                        @else                                        <span class="badge badge-danger">{{$list_item->status}}</span>
+                                        @endif                                    </td>                                    
                                     <td class="project-actions text-right">
-                                        <a class="btn btn-info btn-sm editManufacturer" href="javascript:void(0)" data-id="{{ $list_item->id }}">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                        </a>
-                                        <a class="btn btn-danger btn-sm deleteManufacturer" href="javascript:void(0)" data-id="{{ $list_item->id }}">
-                                            <i class="fas fa-trash">
-                                            </i>
-                                        </a>
+                                        <a class="btn btn-info btn-sm editManufacturer" href="javascript:void(0)" data-id="{{ $list_item->id }}">                                            <i class="fas fa-pencil-alt">                                            </i>                                        </a>
+                                        <a class="btn btn-danger btn-sm deleteManufacturer" href="javascript:void(0)" data-id="{{ $list_item->id }}">                                            <i class="fas fa-trash">                                            </i>                                        </a>
                                     </td>
                                 </tr>
                                 @endforeach

@@ -28,7 +28,7 @@ Calendar Data
                         <table id="myTable" class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th style="width: 1%">#</th>
+                                    <th>ID</th>
                                     <th>Calendar Year</th>
                                     <th>Calendar Period</th>
                                     <th>Month Name</th>
@@ -40,16 +40,9 @@ Calendar Data
                                 </tr>
                             </thead>
                             <tbody>
-                                @php
-                                $i=0;
-                                @endphp
-
                                 @foreach ($calendar as $calendar_data)
-                                @php
-                                $i++;
-                                @endphp
                                 <tr>
-                                    <td>{{$i}}</td>
+                                    <td>{{$calendar_data->id}}</td>
                                     <td>{{$calendar_data->calendar_year}}</td>
                                     <td>{{$calendar_data->calendar_period}}</td>
                                     <td>{{$calendar_data->month_name}}</td>
@@ -65,8 +58,7 @@ Calendar Data
                                     <td class="project-state">
                                         @if ($calendar_data->expired == 'true')
                                         <span class="badge badge-warning">{{ $calendar_data->expired }}</span>
-                                        @else
-                                        <span class="badge badge-info">{{ $calendar_data->expired }}</span>
+                                        @else                                        <span class="badge badge-info">{{ $calendar_data->expired }}</span>
                                         @endif
                                     </td>
                                     <td class="project-actions text-right">

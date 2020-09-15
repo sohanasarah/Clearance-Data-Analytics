@@ -24,5 +24,6 @@ Route::resource('deposit','Master\DepositController');
 Route::resource('clearance','Master\ClearanceController');
 Route::post('clearance/import', 'Master\ClearanceController@import')->name('clearance.import');
 Route::post('deposit/import', 'Master\DepositController@import')->name('deposit.import');
+Route::post('item/import', 'Master\ItemController@import')->name('item.import');
 
 Route::get('segment_chart', 'Charts\SegmentChartsController@index')->name('charts.segments');

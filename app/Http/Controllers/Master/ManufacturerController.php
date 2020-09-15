@@ -49,8 +49,8 @@ class ManufacturerController extends Controller
     {
         //Validate the Data
         $validatedData = Validator::make($request->all(), [
-            'full_name' => 'required|max:48',
-            'short_name' => 'required|max:8',
+            'full_name' => 'required|unique:manufacturers|max:48',
+            'short_name' => 'required|unique:manufacturers|max:8',
         ]);
 
         if ($validatedData->fails()) {

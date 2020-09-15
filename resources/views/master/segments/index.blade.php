@@ -28,7 +28,7 @@ Segments
                             <thead>
                                 <tr>
                                     <th style="width: 1%">
-                                        #
+                                        ID
                                     </th>
                                     <th style="width: 30%">
                                         Internal Segment
@@ -47,17 +47,7 @@ Segments
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @php
-                                $i=0;
-                                @endphp
-                                @foreach ($list as $list_item)
-                                @php
-                                $i++;
-
-                                @endphp
-                                <tr>
-                                    <td>{{$i}}</td>
+                            <tbody>                                @foreach ($list as $list_item)                                <tr>                                    <td>{{$list_item->id}}</td>
                                     <td>{{$list_item->internal_segment}}</td>
                                     <td>{{$list_item->external_segment1}}</td>
                                     <td>{{$list_item->external_segment2}}</td>

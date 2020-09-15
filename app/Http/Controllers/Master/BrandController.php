@@ -55,8 +55,8 @@ class BrandController extends Controller
     {    
         //Validate the Data
         $validatedData = Validator::make($request->all(), [
-            'brand_name' => 'required|max:48',
-            'short_name' => 'required|max:24',
+            'brand_name' => 'required|unique:brands|max:48',
+            'short_name' => 'required|unique:brands|max:24',
             'segment_id' => 'required',
             'manufacturer_id' => 'required',
             'status'  => 'required'

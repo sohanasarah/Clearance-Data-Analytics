@@ -36,9 +36,7 @@ Clearance Data
                         <table id="myTable" class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th style="width: 1%">
-                                        #
-                                    </th>
+                                    <th>ID</th>
                                     <th>
                                         SKU
                                     </th>
@@ -60,14 +58,7 @@ Clearance Data
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                $i=0;
-                                ?>
                                 <?php $__currentLoopData = $clearance; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $clearance_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php
-                                $i++;
-
-                                ?>
                                 <tr>
                                     <td><?php echo e($clearance_data->id); ?></td>
                                     <td><?php echo e($clearance_data->item->item_name); ?></td>
@@ -178,7 +169,7 @@ Clearance Data
                                 <select class="form-control" id="measure" name="measure">
                                     <option selected disabled>Select Measure</option>
                                     <?php $__currentLoopData = $codes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $code): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($code->code_value); ?>"><?php echo e($code->code_value); ?>
+                                    <option value="<?php echo e($code->code_value); ?>"><?php echo e($code->comments); ?>
 
                                     </option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

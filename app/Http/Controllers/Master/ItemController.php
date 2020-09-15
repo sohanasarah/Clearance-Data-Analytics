@@ -8,6 +8,10 @@ use clearance_data_analytics\Brand;
 use clearance_data_analytics\Item;
 use Illuminate\Support\Facades\Validator;
 
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
+use clearance_data_analytics\Imports\ItemImport;
+
 class ItemController extends Controller
 {
     /**
@@ -47,8 +51,8 @@ class ItemController extends Controller
     {
         //Validate the Data
         $validatedData = Validator::make($request->all(), [
-            'item_code' => 'required|max:16',
-            'item_name' => 'required|max:48',
+            'item_code' => 'required|unique:items|max:16',
+            'item_name' => 'required|unique:items|max:48',
             'brand_id' => 'required',
             'status'  => 'required'
         ]);
@@ -147,5 +151,35 @@ class ItemController extends Controller
         Item::find($id)->delete();
         return response()->json(['success' => 'true', 'message'=>'Item has been deleted!']);
 
+    }
+
+    
+    public function import(Request $request)
+    {
+
+        $validatedData = Validator::make($request->all(), [
+            'import_file' => 'required|mimes:csv,txt'
+        ]);
+
+        if ($validatedData->fails()) {
+            return response()->json(
+                ['message' => $validatedData->errors()->all()],
+                400
+            );
+        } else {
+            try {
+                Excel::import(new ItemImport, request()->file('import_file'));
+            } catch (ValidationException $e) {
+                //dd($e);
+                $failures = $e->failures();
+                $jsonOutput = [];
+
+                foreach ($failures as $failure) {
+                    $jsonOutput[$failure->attribute()] = $failure->errors();
+                }
+                return response()->json(['message' => $jsonOutput], 400);
+            }
+            return response()->json(['success' => 'File Uploaded Successfully!']);
+        }
     }
 }

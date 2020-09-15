@@ -37,7 +37,7 @@ class ClearanceController extends Controller
             ->orderBy('id')
             ->get();
         
-        $codes = Code::select('id', 'code_value')
+        $codes = Code::select('id', 'code_value', 'comments')
          ->where('field_name','measure')
          ->where('status', 'active')
          ->orderBy('id')

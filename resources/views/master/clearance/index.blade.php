@@ -38,9 +38,7 @@ Clearance Data
                         <table id="myTable" class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th style="width: 1%">
-                                        #
-                                    </th>
+                                    <th>ID</th>
                                     <th>
                                         SKU
                                     </th>
@@ -62,14 +60,7 @@ Clearance Data
                                 </tr>
                             </thead>
                             <tbody>
-                                @php
-                                $i=0;
-                                @endphp
                                 @foreach ($clearance as $clearance_data)
-                                @php
-                                $i++;
-
-                                @endphp
                                 <tr>
                                     <td>{{$clearance_data->id}}</td>
                                     <td>{{$clearance_data->item->item_name}}</td>
@@ -177,7 +168,7 @@ Clearance Data
                                 <select class="form-control" id="measure" name="measure">
                                     <option selected disabled>Select Measure</option>
                                     @foreach ($codes as $code)
-                                    <option value="{{ $code->code_value }}">{{ $code->code_value }}
+                                    <option value="{{ $code->code_value }}">{{ $code->comments }}
                                     </option>
                                     @endforeach
                                 </select>
