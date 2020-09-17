@@ -27,7 +27,8 @@ Brands
                     <div class="card-body">
                         <table id="myTable" class="table table-striped table-hover">
                             <thead>
-                                <tr>									<th>ID</th>
+                                <tr>
+                                    <th>ID</th>
                                     <th>Brand</th>
                                     <th>Short Name</th>
                                     <th>Segment</th>
@@ -36,25 +37,28 @@ Brands
                                     <th style="width: 20%" class="text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>                                @foreach ($brands as $brand)
-                                <tr>									<td>{{$brand->id}}</td>
+                            <tbody> @foreach ($brands as $brand)
+                                <tr>
+                                    <td>{{$brand->id}}</td>
                                     <td>{{$brand->brand_name}}</td>
                                     <td>{{$brand->short_name}}</td>
                                     <td>{{$brand->segment->internal_segment}}</td>
-                                    <td>{{$brand->manufacturer->short_name}}</td>   
+                                    <td>{{$brand->manufacturer->short_name}}</td>
                                     <td class="project-state">
                                         @if ($brand->status == 'active')
                                         <span class="badge badge-success">{{$brand->status}}</span>
                                         @else
                                         <span class="badge badge-danger">{{ $brand->status }}</span>
                                         @endif
-                                    </td>                                  
+                                    </td>
                                     <td class="project-actions text-right">
-                                        <a class="btn btn-info editbrand" href="javascript:void(0)" data-id="{{ $brand->id }}">
+                                        <a class="btn btn-info editbrand" href="javascript:void(0)"
+                                            data-id="{{ $brand->id }}">
                                             <i class="fas fa-pencil-alt">
                                             </i>
                                         </a>
-                                        <a class="btn btn-danger deletebrand" href="javascript:void(0)" data-id="{{ $brand->id }}">
+                                        <a class="btn btn-danger deletebrand" href="javascript:void(0)"
+                                            data-id="{{ $brand->id }}">
                                             <i class="fas fa-trash">
                                             </i>
                                         </a>
@@ -126,7 +130,8 @@ Brands
 
                     <div class="form-group">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="status" id="status1" value="active" checked>
+                            <input class="form-check-input" type="radio" name="status" id="status1" value="active"
+                                checked>
                             <label class="form-check-label">Active</label>
                         </div>
                         <div class="form-check">
@@ -151,7 +156,22 @@ Brands
 <script>
     $(function () {
         $("#myTable").DataTable({
-            "responsive": true, "autoWidth": false,         });
+            "responsive": true, 
+            "autoWidth": false,
+            "dom": 'Blfrtip',
+            "pagination": 'true',
+            "buttons": [
+                {
+                    extend: 'collection',
+                    text: 'Export',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print',
+                        
+                    ]
+                }
+
+                ]         
+        });
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -26,7 +26,7 @@ Segments
                             <thead>
                                 <tr>
                                     <th style="width: 1%">
-                                        #
+                                        ID
                                     </th>
                                     <th style="width: 30%">
                                         Internal Segment
@@ -45,17 +45,7 @@ Segments
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <?php
-                                $i=0;
-                                ?>
-                                <?php $__currentLoopData = $list; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $list_item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php
-                                $i++;
-
-                                ?>
-                                <tr>
-                                    <td><?php echo e($i); ?></td>
+                            <tbody>                                <?php $__currentLoopData = $list; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $list_item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>                                <tr>                                    <td><?php echo e($list_item->id); ?></td>
                                     <td><?php echo e($list_item->internal_segment); ?></td>
                                     <td><?php echo e($list_item->external_segment1); ?></td>
                                     <td><?php echo e($list_item->external_segment2); ?></td>
@@ -154,9 +144,23 @@ Segments
 <script>
     $(function () {
         $("#myTable").DataTable({
-            "responsive": true, "autoWidth": false, 
-        });
+            "responsive": true, 
+            "autoWidth": false,
+            "dom": 'Blfrtip',
+            "pagination": 'true',
+            "buttons": [
+                {
+                    extend: 'collection',
+                    text: 'Export',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print',
+                        
+                    ]
+                }
 
+                ]         
+        });
+        
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

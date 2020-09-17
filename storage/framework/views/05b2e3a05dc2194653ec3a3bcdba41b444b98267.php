@@ -28,4 +28,11 @@
 <script src="<?php echo e(asset('dist/js/adminlte.js')); ?>"></script>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<?php /**PATH C:\xampp\htdocs\clearance_data_analytics\resources\views/inc/scripts.blade.php ENDPATH**/ ?>
+
+<script src="<?php echo e(asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')); ?>"></script>
+<script src="<?php echo e(asset('plugins/datatables-buttons/js/buttons.flash.min.js')); ?>"></script>
+<script src="<?php echo e(asset('plugins/jszip/jszip.min.js')); ?>"></script>
+<script src="<?php echo e(asset('plugins/pdfmake/pdfmake.min.js')); ?>"></script>
+<script src="<?php echo e(asset('plugins/pdfmake/vfs_fonts.js')); ?>"></script>
+<script src="<?php echo e(asset('plugins/datatables-buttons/js/buttons.html5.min.js')); ?>"></script>
+<script src="<?php echo e(asset('plugins/datatables-buttons/js/buttons.print.min.js')); ?>"></script><?php /**PATH C:\xampp\htdocs\clearance_data_analytics\resources\views/inc/scripts.blade.php ENDPATH**/ ?>

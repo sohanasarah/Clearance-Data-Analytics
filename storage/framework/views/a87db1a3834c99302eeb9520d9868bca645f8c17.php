@@ -26,7 +26,7 @@ Calendar Data
                         <table id="myTable" class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th style="width: 1%">#</th>
+                                    <th>ID</th>
                                     <th>Calendar Year</th>
                                     <th>Calendar Period</th>
                                     <th>Month Name</th>
@@ -38,16 +38,9 @@ Calendar Data
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                $i=0;
-                                ?>
-
                                 <?php $__currentLoopData = $calendar; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $calendar_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php
-                                $i++;
-                                ?>
                                 <tr>
-                                    <td><?php echo e($i); ?></td>
+                                    <td><?php echo e($calendar_data->id); ?></td>
                                     <td><?php echo e($calendar_data->calendar_year); ?></td>
                                     <td><?php echo e($calendar_data->calendar_period); ?></td>
                                     <td><?php echo e($calendar_data->month_name); ?></td>
@@ -63,8 +56,7 @@ Calendar Data
                                     <td class="project-state">
                                         <?php if($calendar_data->expired == 'true'): ?>
                                         <span class="badge badge-warning"><?php echo e($calendar_data->expired); ?></span>
-                                        <?php else: ?>
-                                        <span class="badge badge-info"><?php echo e($calendar_data->expired); ?></span>
+                                        <?php else: ?>                                        <span class="badge badge-info"><?php echo e($calendar_data->expired); ?></span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="project-actions text-right">
@@ -201,7 +193,21 @@ Calendar Data
 <script>
     $(function () {
         $("#myTable").DataTable({
-            "responsive": true, "autoWidth": false, 
+            "responsive": true, 
+            "autoWidth": false,
+            "dom": 'Blfrtip',
+            "pagination": 'true',
+            "buttons": [
+                {
+                    extend: 'collection',
+                    text: 'Export',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print',
+                        
+                    ]
+                }
+
+                ]         
         });
 
         $.ajaxSetup({

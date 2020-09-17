@@ -223,7 +223,21 @@ Clearance Data
 <script>
     $(function () {
         $("#myTable").DataTable({
-            "responsive": true, "autoWidth": false,  "order": [[ 0, "desc" ]]
+            "responsive": true, 
+            "autoWidth": false,
+            "dom": 'Blfrtip',
+            "pagination": 'true',
+            "buttons": [
+                {
+                    extend: 'collection',
+                    text: 'Export',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print',
+                        
+                    ]
+                }
+
+                ]         
         });
 
         $.ajaxSetup({

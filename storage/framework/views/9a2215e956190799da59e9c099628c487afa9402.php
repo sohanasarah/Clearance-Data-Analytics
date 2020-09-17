@@ -1,9 +1,7 @@
 
-
 <?php $__env->startSection('content-title'); ?>
 Deposit Data
 <?php $__env->stopSection(); ?>
-
 <?php $__env->startSection('content-body'); ?>
 <!-- Main content -->
 <div class="content">
@@ -34,11 +32,8 @@ Deposit Data
                     
                     <div class="card-body">
                         <table id="myTable" class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th style="width: 1%">
-                                        #
-                                    </th>
+                            <thead>                                <tr>
+                                    <th>ID</th>
                                     <th>Year</th>
                                     <th>Month</th>
                                     <th>Manufacturer</th>
@@ -48,17 +43,10 @@ Deposit Data
                                     <th style="width: 30%" class="text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <?php
-                                $i=0;
-                                ?>
+                            <tbody>                                
                                 <?php $__currentLoopData = $deposits; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $deposit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php
-                                $i++;
-
-                                ?>
                                 <tr>
-                                    <td><?php echo e($i); ?></td>
+                                    <td><?php echo e($deposit->calendar->id); ?></td>
                                     <td><?php echo e($deposit->calendar->calendar_year); ?></td>
                                     <td><?php echo e($deposit->calendar->month_name); ?></td>
                                     <td><?php echo e($deposit->manufacturer->short_name); ?></td>
@@ -227,7 +215,21 @@ Deposit Data
 <script>
     $(function () {
         $("#myTable").DataTable({
-            "responsive": true, "autoWidth": false, 
+            "responsive": true, 
+            "autoWidth": false,
+            "dom": 'Blfrtip',
+            "pagination": 'true',
+            "buttons": [
+                {
+                    extend: 'collection',
+                    text: 'Export',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print',
+                        
+                    ]
+                }
+
+                ]         
         });
 
         $.ajaxSetup({

@@ -26,7 +26,7 @@ Manufacturers
                             <thead>
                                 <tr>
                                     <th style="width: 1%">
-                                        #
+                                        ID
                                     </th>
                                     <th style="width: 30%">
                                         Manufacturer Name
@@ -42,38 +42,18 @@ Manufacturers
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <?php
-                                    $i=0;
-                                ?>
-
-                                <?php $__currentLoopData = $list; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $list_item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php
-                                $i++;
-
-                                ?>
-                                <tr>
-                                    <td><?php echo e($i); ?></td>
+                            <tbody>                                <?php $__currentLoopData = $list; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $list_item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>                                <tr>
+                                    <td><?php echo e($list_item->id); ?></td>
                                     <td><?php echo e($list_item->full_name); ?></td>
-                                    <td><?php echo e($list_item->short_name); ?></td>
-                                    
+                                    <td><?php echo e($list_item->short_name); ?></td>                                    
                                     <td class="project-state">
                                         <?php if($list_item->status == 'active'): ?>
                                         <span class="badge badge-success"><?php echo e($list_item->status); ?></span>
-                                        <?php else: ?>
-                                        <span class="badge badge-danger"><?php echo e($list_item->status); ?></span>
-                                        <?php endif; ?>
-                                    </td>
-                                    
+                                        <?php else: ?>                                        <span class="badge badge-danger"><?php echo e($list_item->status); ?></span>
+                                        <?php endif; ?>                                    </td>                                    
                                     <td class="project-actions text-right">
-                                        <a class="btn btn-info btn-sm editManufacturer" href="javascript:void(0)" data-id="<?php echo e($list_item->id); ?>">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                        </a>
-                                        <a class="btn btn-danger btn-sm deleteManufacturer" href="javascript:void(0)" data-id="<?php echo e($list_item->id); ?>">
-                                            <i class="fas fa-trash">
-                                            </i>
-                                        </a>
+                                        <a class="btn btn-info btn-sm editManufacturer" href="javascript:void(0)" data-id="<?php echo e($list_item->id); ?>">                                            <i class="fas fa-pencil-alt">                                            </i>                                        </a>
+                                        <a class="btn btn-danger btn-sm deleteManufacturer" href="javascript:void(0)" data-id="<?php echo e($list_item->id); ?>">                                            <i class="fas fa-trash">                                            </i>                                        </a>
                                     </td>
                                 </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -157,7 +137,21 @@ Manufacturers
 <script>
     $(function () {
         $("#myTable").DataTable({
-            "responsive": true, "autoWidth": false, 
+            "responsive": true, 
+            "autoWidth": false,
+            "dom": 'Blfrtip',
+            "pagination": 'true',
+            "buttons": [
+                {
+                    extend: 'collection',
+                    text: 'Export',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print',
+                        
+                    ]
+                }
+
+                ]         
         });
 
         $.ajaxSetup({
