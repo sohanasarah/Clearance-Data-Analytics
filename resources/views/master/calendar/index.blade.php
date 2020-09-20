@@ -208,8 +208,7 @@ Calendar Data
                         
                     ]
                 }
-
-                ]         
+            ]         
         });
 
         $.ajaxSetup({
